@@ -4,7 +4,8 @@ const cors = require('cors');
 require('dotenv').config();
 const bodyParser = require('body-parser');
 const routes = require('./routes/routes');
-const {dbConnection} = require('./utilis/db')
+const {dbConnection} = require('./utilis/db');
+const path = require('path');
 
 const PORT = process.env.PORT || 5000;
 
@@ -26,6 +27,7 @@ app.get('/', (req, res) => {
 }); 
 
 app.use('/api', routes);
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.listen(PORT, () => {
     console.log(`Example app listening on port ${PORT}`)
