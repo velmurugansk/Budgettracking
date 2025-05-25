@@ -2,11 +2,13 @@ const router = require('express').Router();
 const cookieParser = require('cookie-parser');
 router.use(cookieParser())
 const {validateUser} = require('../middlewares/sessionCheck');
+const upload = require('../middlewares/uploadmiddleware');
 
 const {userLogin, userRegister} = require('../controllers/authenticate');
 const {addIncome, getallIncome, deleteIncome} = require('../controllers/incomeController');
 const {deleteExpense, addExpense, getallExpense} = require('../controllers/expenseController');
-const {dashboardData} = require('../controllers/dashboardController')
+const {dashboardData} = require('../controllers/dashboardController');
+
 
 router.post('/auth/login', userLogin);
 router.post('/auth/register', userRegister);
@@ -18,5 +20,14 @@ router.get('/expense/list', validateUser, getallExpense);
 router.post('/expense/delete',validateUser, deleteExpense);
 
 router.post('/incomexpense/status',validateUser, dashboardData);
+
+router.post('/upload/image', upload.single("image"), (req, res) => {
+    if(!req.file) {
+        return res.status(200).json({status: false, message: 'No file uploaded!'});
+    }
+
+    const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+    res.status(200).json({status: true, imageurl : imageUrl});
+});
 
 module.exports = router;
