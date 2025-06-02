@@ -17,6 +17,7 @@
     "@tailwindcss/vite": "^4.1.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-router-dom": "^6.30.1",
     "styled-components": "^6.1.18",
     "tailwindcss": "^4.1.5"
   },
