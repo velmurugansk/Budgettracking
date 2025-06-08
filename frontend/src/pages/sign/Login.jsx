@@ -1,8 +1,14 @@
 import React, { useState } from 'react'
 import { Container, Paper, TextField, Button } from '@mui/material'
+import { useDispatch } from "react-redux";
+import { unwrapResult } from '@reduxjs/toolkit'
+import { useNavigate } from 'react-router-dom';
+import { userLogin } from '../../reducers/authReducer';
+import toast from 'react-hot-toast'
 
 const Login = () => {
-
+const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [userdata, setUserdata] = useState({});
   const [error, setError] = useState('');
   const [pwderr, setPwderr] = useState('');
@@ -17,8 +23,24 @@ const Login = () => {
     e.preventDefault();    
     const isvalidmail = validateEmail(userdata.email);
     const validpassword = validatePassword(userdata.password);    
-    if(!isvalidmail && !validpassword) {
-      console.log(userdata)
+    if(!isvalidmail && !validpassword) {      
+      const data = dispatch(userLogin(userdata));      
+      data.then(unwrapResult)
+      .then((response) => {        
+        const result =  response.data.status;   
+        const token = response.data.token;
+        if(result) {
+          toast.success(response.data.message);
+          localStorage.setItem("token",token)
+          navigate("/");
+        } else {
+          toast.error(response.data.message);
+        }
+        
+      })
+      .catch((error) => {
+        console.error('Error:', error); // Handle errors
+      });
     }
   }
 

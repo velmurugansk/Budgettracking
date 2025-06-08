@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const cookieParser = require('cookie-parser');
 router.use(cookieParser())
-const {validateUser} = require('../middlewares/sessionCheck');
+const {validateUser, verify} = require('../middlewares/sessionCheck');
 const upload = require('../middlewares/uploadmiddleware');
 
 const {userLogin, userRegister} = require('../controllers/authenticate');
@@ -18,6 +18,7 @@ router.post('/income/delete',validateUser, deleteIncome);
 router.post('/expense/add', validateUser, addExpense);
 router.get('/expense/list', validateUser, getallExpense);
 router.post('/expense/delete',validateUser, deleteExpense);
+router.get('/verify', verify);
 
 router.post('/incomexpense/status',validateUser, dashboardData);
 
