@@ -5,6 +5,7 @@ import { unwrapResult } from '@reduxjs/toolkit'
 import { useNavigate } from 'react-router-dom';
 import { userLogin } from '../../reducers/authReducer';
 import toast from 'react-hot-toast'
+import { Link } from 'react-router-dom'
 
 const Login = () => {
 const dispatch = useDispatch();
@@ -95,7 +96,7 @@ const dispatch = useDispatch();
           helperText={pwderr} 
           size="small" />
           <Button variant='contained' className='w-full bg-[#2b2b2b]' sx={{ my: 2, backgroundColor: '#2b2b2b' }} onClick={handleSubmit}>Sign in</Button>
-          <p className='my-2'>Don't have a account?<Button>Signup</Button></p>
+          <p className='my-2'>Don't have a account?<Button><Link to="/signup">Signup</Link></Button></p>
         </Paper>
       </Container>
     </div>

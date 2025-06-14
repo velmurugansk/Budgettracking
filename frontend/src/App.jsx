@@ -5,12 +5,14 @@ import Layout from "./components/Layout";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Income from "./pages/income/Income";
 import Expense from "./pages/expense/Expense";
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 
 const routepaths = [
   {
-    path:"/",
+    path: "/",
     element: <Layout />,
-    children:[
+    children: [
       { index: true, element: <Dashboard /> },
       { path: 'income', element: <Income /> },
       { path: 'expense', element: <Expense /> },
@@ -31,13 +33,19 @@ function App() {
   // const themeChange = () => {
   //   document.documentElement.classList.toggle('dark');
   // }
+  const appTheme = createTheme({
+    palette: {
+      mode: 'light',
+    },
+  });
 
   const response = useRoutes(routepaths);
 
   return (
-    <>
+    <ThemeProvider theme={appTheme}>
+      <CssBaseline/>
       {response}
-    </>
+    </ThemeProvider>
   )
 }
 

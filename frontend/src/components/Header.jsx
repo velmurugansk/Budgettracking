@@ -30,6 +30,7 @@ const Header = () => {
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
+          {/* LOGO and Title (Desktop) - Left aligned */}
           <FcMoneyTransfer sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
           <Typography
             variant="h6"
@@ -49,6 +50,7 @@ const Header = () => {
             LOGO
           </Typography>
 
+          {/* Mobile Menu Icon and Mobile Logo - Left aligned on small screens */}
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               size="large"
@@ -82,27 +84,35 @@ const Header = () => {
                 </MenuItem>
               ))}
             </Menu>
+            {/* Mobile LOGO to the right of the hamburger menu */}
+            <Typography
+              variant="h5"
+              noWrap
+              component="a"
+              href="#app-bar-with-responsive-menu"
+              sx={{
+                mr: 2,
+                display: { xs: 'flex', md: 'none' },
+                flexGrow: 1, // This flexGrow pushes the mobile logo to the right, next to hamburger
+                fontFamily: 'monospace',
+                fontWeight: 700,
+                letterSpacing: '.3rem',
+                color: 'inherit',
+                textDecoration: 'none',
+              }}
+            >
+              LOGO
+            </Typography>
           </Box>
-          {/* <FcMoneyTransfer sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} /> */}
-          <Typography
-            variant="h5"
-            noWrap
-            component="a"
-            href="#app-bar-with-responsive-menu"
-            sx={{
-              mr: 2,
-              display: { xs: 'flex', md: 'none' },
-              flexGrow: 1,
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            LOGO
-          </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+
+          {/* This Box pushes content to the right on desktop screens */}
+          {/* It's hidden on mobile (xs) as the mobile Box above already has flexGrow: 1 */}
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }} />
+
+
+          {/* Desktop Navigation Pages - Right aligned */}
+          {/* Removed flexGrow: 1 from here so it doesn't consume all space */}
+          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
               <Button
                 key={page}
@@ -113,6 +123,8 @@ const Header = () => {
               </Button>
             ))}
           </Box>
+
+          {/* User Settings (Avatar & Menu) - Rightmost */}
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
