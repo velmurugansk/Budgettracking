@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { userLogin } from '../../reducers/authReducer';
 import toast from 'react-hot-toast'
 import { Link } from 'react-router-dom'
+import {validateEmail, validatePassword} from '../../utils'
 
 const Login = () => {
 const dispatch = useDispatch();
@@ -22,8 +23,8 @@ const dispatch = useDispatch();
 
   const handleSubmit = (e) => {
     e.preventDefault();    
-    const isvalidmail = validateEmail(userdata.email);
-    const validpassword = validatePassword(userdata.password);    
+    const isvalidmail = validateEmail(userdata.email) ? setError('Please enter a valid email address') : setError('');
+    const validpassword = validatePassword(userdata.password) ? setPwderr('Password must be at least 8 characters long.') : setPwderr('');  
     if(!isvalidmail && !validpassword) {      
       const data = dispatch(userLogin(userdata));      
       data.then(unwrapResult)
@@ -42,27 +43,6 @@ const dispatch = useDispatch();
       .catch((error) => {
         console.error('Error:', error); // Handle errors
       });
-    }
-  }
-
-  const validateEmail = (email) => {
-    const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;    
-    if (!emailRegex.test(email)) {
-      setError('Please enter a valid email address');
-      return true;
-    } else {
-      setError('');
-      return false;
-    }
-  };
-
-  const validatePassword = (pwd) => {
-    if(pwd.length < 6) {
-      setPwderr('Password must be at least 8 characters long.');
-      return true;
-    } else {
-      setPwderr('');
-      return false;
     }
   }
 

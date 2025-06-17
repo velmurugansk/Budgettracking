@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import {Container, Paper, TextField, Button} from '@mui/material'
 import { Link } from 'react-router-dom'
+import {validateEmail, validatePassword} from '../../utils'
 
 const Register = () => {
 
@@ -11,6 +12,10 @@ const Register = () => {
     image:''
   })
 
+  const [nameErr, setNameerr] = useState('');
+  const [emailErr, setEmailerr] = useState('');
+  const [passwordErr, setPassworderr] = useState('');
+
   const handleChanges = (e) => {
     e.preventDefault();
     const {name, value} = e.target;
@@ -19,7 +24,16 @@ const Register = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(registerdata)
+    validateEmail(registerdata.email) ? setEmailerr('Please enter a valid email address') : setEmailerr('');
+    const isemailvalid = validateEmail(registerdata.email) ? true : false;
+    !registerdata.name ? setNameerr('Please enter a username') : setNameerr('');
+    const isname =  !registerdata.name ? true : false;
+    validatePassword(registerdata.password) ? setPassworderr('Please enter a password') : setPassworderr('');
+    const isvalidPass =  validatePassword(registerdata.password) ? true : false;
+    if(!isemailvalid && !isname && !isvalidPass) {
+      console.log('hai', registerdata)
+      // api call is pending from frontend to add register
+    }
   }
 
   return (
@@ -28,19 +42,19 @@ const Register = () => {
         <Paper elevation={10} sx={{ borderColor: "#d4d4d4" }} className='p-3 px-8'>
           <p className='text-center font-bold text-2xl my-5'>Signup</p>
           <TextField type='text' 
-          // error={!!error} 
+          error={!!nameErr} 
           name="name" 
           onChange={handleChanges} 
-          value={registerdata.email} 
+          value={registerdata.name} 
           placeholder='Enter name' 
           required 
           fullWidth 
           autoFocus 
           size="small" 
-          // helperText={error} 
+          helperText={nameErr} 
           sx={{ my: 2}}/>
           <TextField type='email' 
-          // error={!!error} 
+          error={!!emailErr} 
           name="email" 
           onChange={handleChanges} 
           value={registerdata.email} 
@@ -49,10 +63,10 @@ const Register = () => {
           fullWidth 
           autoFocus 
           size="small" 
-          // helperText={error} 
+          helperText={emailErr} 
           sx={{ my: 2}}/>
           <TextField type='password' 
-          // error={!!pwderr} 
+          error={!!passwordErr} 
           name="password" 
           onChange={handleChanges} 
           value={registerdata.password} 
@@ -61,7 +75,7 @@ const Register = () => {
           fullWidth 
           autoFocus 
           sx={{ my: 2 }} 
-          // helperText={pwderr} 
+          helperText={passwordErr} 
           size="small" />
           <Button variant='contained' className='w-full bg-[#2b2b2b]' sx={{ my: 2, backgroundColor: '#2b2b2b' }} onClick={handleSubmit}>Sign in</Button>
           <p className='my-2'>Already have an account?<Button><Link to="/login">Login</Link></Button></p>
