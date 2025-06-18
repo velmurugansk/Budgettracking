@@ -2,10 +2,9 @@ import React, { useState } from 'react'
 import { Container, Paper, TextField, Button } from '@mui/material'
 import { useDispatch } from "react-redux";
 import { unwrapResult } from '@reduxjs/toolkit'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { userLogin } from '../../reducers/authReducer';
 import toast from 'react-hot-toast'
-import { Link } from 'react-router-dom'
 import {validateEmail, validatePassword} from '../../utils'
 
 const Login = () => {

@@ -10,12 +10,22 @@ export const userLogin = createAsyncThunk('auth/login', async (info) => {
     }
 })
 
+export const userRegister = createAsyncThunk('auth/register', async(info) => {
+    try {
+        const response = await apiConf.post('/auth/register', info, { withCredentials: true });        
+        return response;
+    } catch (error) {
+        return error.response.data;
+    }
+})
+
 const initialState = {
     errorMessage:'',
     loading: '',
     userdata: '',
     successMessage: '',
-    isAuthenticate: false
+    isAuthenticate: false,
+    isRegistered: false
 }
 
 const authSlice = new createSlice({
@@ -48,6 +58,14 @@ const authSlice = new createSlice({
             state.successMessage = payload.data.message;
             state.userdata = payload.data.data;
             state.isAuthenticate = true;
+        }).addCase(userRegister.pending, (state) => {
+            state.isRegistered = false;
+        }).addCase(userRegister.rejected, (state, { payload }) => {
+            state.isRegistered = false;
+            state.errorMessage = payload.error;
+        }).addCase(userRegister.fulfilled, (state, { payload }) => {
+            state.isRegistered = true;
+            state.userdata = payload.data.data;
         })
     }
 })
