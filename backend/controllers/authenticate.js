@@ -48,9 +48,10 @@ const userRegister = async(req, res) => {
 }
 
 const userDetails =async(req, res) => {
+    console.log(req)
     const {id} = req.body;
     try{
-        const finduser = await users.findOne({_id:id}).select('+password');
+        const finduser = await user.findOne({_id:id});
         if(finduser) {
             res.status(200).json({"status": true,"data":finduser});
         } else {

@@ -4,7 +4,7 @@ router.use(cookieParser())
 const {validateUser, verify} = require('../middlewares/sessionCheck');
 const upload = require('../middlewares/uploadmiddleware');
 
-const {userLogin, userRegister} = require('../controllers/authenticate');
+const {userLogin, userRegister, userDetails} = require('../controllers/authenticate');
 const {addIncome, getallIncome, deleteIncome} = require('../controllers/incomeController');
 const {deleteExpense, addExpense, getallExpense} = require('../controllers/expenseController');
 const {dashboardData} = require('../controllers/dashboardController');
@@ -12,6 +12,7 @@ const {dashboardData} = require('../controllers/dashboardController');
 
 router.post('/auth/login', userLogin);
 router.post('/auth/register', userRegister);
+router.get('/user/list', validateUser, userDetails);
 router.post('/income/add', validateUser, addIncome);
 router.get('/income/list', validateUser, getallIncome);
 router.post('/income/delete',validateUser, deleteIncome);

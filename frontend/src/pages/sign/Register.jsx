@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
 import { Container, Paper, TextField, Button } from '@mui/material'
 import { useNavigate, Link } from 'react-router-dom';
-import { validateEmail, validatePassword } from '../../utils'
+import { validateEmail, validatePassword, imageUpload } from '../../utils'
 import toast from 'react-hot-toast'
 import { useDispatch } from "react-redux";
 import { unwrapResult } from '@reduxjs/toolkit'
 import { userRegister } from '../../reducers/authReducer';
+import Pictureupload from '../../common/Pictureupload';
 
 const Register = () => {
 
@@ -21,22 +22,28 @@ const Register = () => {
   const [nameErr, setNameerr] = useState('');
   const [emailErr, setEmailerr] = useState('');
   const [passwordErr, setPassworderr] = useState('');
-
+  const [image, setImage] = useState('');
   const handleChanges = (e) => {
     e.preventDefault();
     const { name, value } = e.target;
-    setRegisterData({ ...registerdata, [name]: value });
+    setRegisterData({...registerdata, [name]: value });
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if(image){      
+      const result = await imageUpload(image);      
+      const profileurl = await result ? result : '';                            
+      registerdata.image = profileurl;    
+    }
     validateEmail(registerdata.email) ? setEmailerr('Please enter a valid email address') : setEmailerr('');
     const isemailvalid = validateEmail(registerdata.email) ? true : false;
     !registerdata.name ? setNameerr('Please enter a username') : setNameerr('');
     const isname = !registerdata.name ? true : false;
     validatePassword(registerdata.password) ? setPassworderr('Please enter a password') : setPassworderr('');
     const isvalidPass = validatePassword(registerdata.password) ? true : false;
-    if (!isemailvalid && !isname && !isvalidPass) {
+    
+    if (!isemailvalid && !isname && !isvalidPass) {           
       const data = dispatch(userRegister(registerdata));
       data.then(unwrapResult)
         .then((response) => {
@@ -95,6 +102,7 @@ const Register = () => {
             sx={{ my: 2 }}
             helperText={passwordErr}
             size="small" />
+          <Pictureupload image={image} setImage={setImage}/>
           <Button variant='contained' className='w-full bg-[#2b2b2b]' sx={{ my: 2, backgroundColor: '#2b2b2b' }} onClick={handleSubmit}>Sign in</Button>
           <p className='my-2'>Already have an account?<Button><Link to="/login">Login</Link></Button></p>
         </Paper>

@@ -17,8 +17,7 @@ const Layout = () => {
 
   const verifyAuth = async () => {
     try {
-      const response = await apiConf.get('verify'); 
-      console.log(response)     
+      const response = await apiConf.get('verify');        
       dispatch(setAuth(response.data.user));
     } catch (error) {      
       dispatch(logout());
