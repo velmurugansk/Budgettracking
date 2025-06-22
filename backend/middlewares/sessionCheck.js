@@ -16,4 +16,22 @@ const validateUser = async (req, res, next) => {
     }
 }
 
-module.exports = { validateUser }
+const verify = async(req, res) => {
+    let accessToken = req.cookies.accessToken;
+    if(!accessToken) {
+        return res.status(401).json({"status": false,"message":'Session out!, Login again!'});
+    } else {
+        try{
+            const tokendecode = jwt.verify(accessToken, process.env.SECRET_KEY);
+            const user = {
+                id : tokendecode.id,
+                name:tokendecode.name
+            }     
+            res.json({ user });       
+        } catch(error) {
+            return res.status(401).json({"status": false,"message":'Session out!, Login again!'});
+        }
+    }
+}
+
+module.exports = { validateUser, verify }

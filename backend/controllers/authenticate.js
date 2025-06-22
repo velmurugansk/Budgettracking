@@ -47,4 +47,31 @@ const userRegister = async(req, res) => {
     }
 }
 
-module.exports = {userLogin, userRegister}
+const userDetails =async(req, res) => {
+    console.log(req)
+    const {id} = req.body;
+    try{
+        const finduser = await user.findOne({_id:id});
+        if(finduser) {
+            res.status(200).json({"status": true,"data":finduser});
+        } else {
+            res.status(404).json({"status": false,"message":'User details wrong!'});  
+        }
+
+    } catch (error) {
+        res.status(500).json({"status": false,"message":error.message});
+    }
+}
+
+const userLogout = async(req, res) => {
+    res.clearCookie('accessToken', {
+        httpOnly: true,
+        sameSite: 'lax', // or 'lax' or 'none'
+        path: '/',
+        secure: process.env.NODE_ENV === 'production', // Use secure in production
+        expires : ''
+    });
+    res.status(200).json({ status : true, message: 'Logged out successfully' });
+}
+
+module.exports = {userLogin, userRegister, userDetails, userLogout}
