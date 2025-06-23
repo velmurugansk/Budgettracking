@@ -27,8 +27,4 @@ export const imageUpload = async (file) => {
     }    
 }
 
-export const userDetails = async (id) => {
-    const response = await apiConf.get('/user/list', id);      
-    return response  
-}
 

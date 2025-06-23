@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   AppBar, Stack, Toolbar, IconButton, Typography, Menu, MenuItem, Button, Tooltip, Avatar, Drawer, Divider, List,
   ListItemButton, ListItemText, ListItem, CssBaseline
@@ -7,19 +7,31 @@ import { FcMoneyTransfer } from "react-icons/fc";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { LuCircleUser } from "react-icons/lu";
 import { useSelector } from "react-redux"
-import {userDetails} from "../utils"
+import apiConf from '../api/apiConf'
+import { Link as RouterLink } from 'react-router-dom';
 
-const pages = ['Dashboard', 'Income', 'Expense'];
+
+const pages = [{ key: 'Dashboard', path: "/" }, { key: 'Income', path: "/income" }, { key: 'Expense', path: "/expense" }];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 const Header = () => {
   const drawerWidth = 240;
-  const profileurl = '';
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const uid = useSelector((state) => state.cookie.user.id)
   const username = useSelector((state) => state.cookie.user.name)
-  const res = userDetails({id:uid});
-  console.log(res)
+  // const res = uid ? userDetails({ id: uid }) : '';
+  const [profileUrl, setProfileurl] = useState('');
+  const userDetails = async (id) => {
+    try {
+      if (id) {
+        const response = await apiConf.get('/user/list', { params: { id: id } });
+        const data = response?.data?.data;
+        setProfileurl(data ? data?.image : '')
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
   };
@@ -30,17 +42,21 @@ const Header = () => {
         Budget Tracker
       </Typography>
       <Divider />
-      <List>
+      <List sx={{ listStyle: 'none', padding: 0}}>
         {pages.map((item) => (
-          <ListItem key={item} disablePadding>
-            <ListItemButton sx={{ textAlign: 'center' }}>
-              <ListItemText primary={item} />
+          <ListItem key={item.key} disablePadding>
+            <ListItemButton component={RouterLink} sx={{ textAlign: 'center' }} to={item.path}>
+              <ListItemText primary={item.key} />
             </ListItemButton>
           </ListItem>
         ))}
       </List>
     </div>
   );
+
+  useEffect(() => {
+    userDetails(uid);
+  }, [uid])
 
   return (
     <>
@@ -53,17 +69,18 @@ const Header = () => {
           </div>
           <div className='flex items-center'>
             <div className='flex items-center mr-3'>
-              {pages.map((page) => (
-                <Button
-                  key={page}
-                  sx={{ color: 'white', display: 'block' }}
-                >
-                  {page}
-                </Button>
-              ))}
+              <List className='flex items-center' sx={{ listStyle: 'none', padding: 0, }}>
+                {pages.map((item) => (
+                  <ListItem key={item.key} disablePadding>
+                    <ListItemButton component={RouterLink} sx={{ textAlign: 'center' }} to={item.path}>
+                      <ListItemText primary={item.key} />
+                    </ListItemButton>
+                  </ListItem>
+                ))}
+              </List>
             </div>
             {username ? <Typography className='capitalize'>{username}</Typography> : ''}
-            <Avatar alt="profile pic" className='ml-1' src={profileurl ? profileurl : <LuCircleUser />} />
+            <Avatar alt="profile pic" className='ml-1' src={profileUrl ? profileUrl : <LuCircleUser />} />
           </div>
         </Stack>
       </AppBar>

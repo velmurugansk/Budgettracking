@@ -47,9 +47,9 @@ const userRegister = async(req, res) => {
     }
 }
 
-const userDetails =async(req, res) => {
+const userDetails =async(req, res) => {    
     console.log(req)
-    const {id} = req.body;
+    const {id} = req.query;    
     try{
         const finduser = await user.findOne({_id:id});
         if(finduser) {
