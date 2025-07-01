@@ -17,8 +17,8 @@ const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 const Header = () => {
   const drawerWidth = 240;
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  const uid = useSelector((state) => state.cookie.user.id)
-  const username = useSelector((state) => state.cookie.user.name)
+  const uid = useSelector((state) => state?.cookie?.user?.id ? state?.cookie?.user?.id : state?.cookie?.auth?.userdata?.id)  
+  const username = useSelector((state) => state?.cookie?.user?.name ? state?.cookie?.user?.name : state?.cookie?.auth?.userdata?.name)
   // const res = uid ? userDetails({ id: uid }) : '';
   const [profileUrl, setProfileurl] = useState('');
   const userDetails = async (id) => {
@@ -61,14 +61,14 @@ const Header = () => {
   return (
     <>
       <CssBaseline />
-      <AppBar position="static" className='py-3 px-5'>
+      <AppBar position="static" className='py-3 px-5 w-full'>
         <Stack direction="row" className='items-center justify-between'>
           <div className='flex items-center'>
-            <RxHamburgerMenu className='mr-2 cursor-pointer' sx={{ display: { xs: 'flex', md: 'none' } }} onClick={handleDrawerToggle} />
+            <RxHamburgerMenu className='mr-2 cursor-pointer md:hidden lg:hidden xs:hidden' sx={{ display: { xs: 'flex', md: 'none' } }} onClick={handleDrawerToggle} />
             <h5>Budget Tracker</h5>
           </div>
           <div className='flex items-center'>
-            <div className='flex items-center mr-3'>
+            <div className='flex items-center mr-3 hidden md:block lg:block xs:block'>
               <List className='flex items-center' sx={{ listStyle: 'none', padding: 0, }}>
                 {pages.map((item) => (
                   <ListItem key={item.key} disablePadding>

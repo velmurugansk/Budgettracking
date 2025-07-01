@@ -22,7 +22,7 @@ export const userRegister = createAsyncThunk('auth/register', async(info) => {
 const initialState = {
     errorMessage:'',
     loading: '',
-    userdata: '',
+    userdata: '',    
     successMessage: '',
     isAuthenticate: false,
     isRegistered: false
@@ -40,8 +40,7 @@ const authSlice = new createSlice({
         },
         logoutState: (state) => {
             state.errorMessage = '';
-            state.loading = '';
-            state.userdata = '';
+            state.loading = '';            
             state.successMessage = '';
             state.isAuthenticate = false;
         }
@@ -52,12 +51,12 @@ const authSlice = new createSlice({
         }).addCase(userLogin.rejected, (state, { payload }) => {
             state.loading = '';
             state.errorMessage = payload.error;
-            state.isAuthenticate = false;
+            state.isAuthenticate = false;                        
         }).addCase(userLogin.fulfilled, (state, {payload}) => {
             state.loading = '';
             state.successMessage = payload.data.message;
             state.userdata = payload.data.data;
-            state.isAuthenticate = true;
+            state.isAuthenticate = true;            
         }).addCase(userRegister.pending, (state) => {
             state.isRegistered = false;
         }).addCase(userRegister.rejected, (state, { payload }) => {
