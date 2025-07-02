@@ -42,6 +42,7 @@ const authSlice = new createSlice({
             state.errorMessage = '';
             state.loading = '';            
             state.successMessage = '';
+            state.userdata = '';
             state.isAuthenticate = false;
         }
     },
