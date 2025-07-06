@@ -14,7 +14,7 @@ import { logoutState } from '../reducers/authReducer';
 import { persistor } from '../store/store';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-
+import Themebutton from './Themebutton';
 
 const pages = [{ key: 'Dashboard', path: "/" }, { key: 'Income', path: "/income" }, { key: 'Expense', path: "/expense" }];
 const settings = ['Profile', 'Logout'];
@@ -85,13 +85,14 @@ const Header = () => {
   return (
     <>
       <CssBaseline />
-      <AppBar position="static" className='py-3 px-5 w-full'>
+      <AppBar position="static" className='py-1 px-5 w-full'>
         <Stack direction="row" className='items-center justify-between'>
           <div className='flex items-center'>
             <RxHamburgerMenu className='mr-2 cursor-pointer md:hidden lg:hidden xs:hidden' sx={{ display: { xs: 'flex', md: 'none' } }} onClick={handleDrawerToggle} />
             <h5>Budget Tracker</h5>
           </div>
           <div className='flex items-center'>
+            <Themebutton className='mr-1' />
             <div className='flex items-center mr-3 hidden md:block lg:block xs:block'>
               <List className='flex items-center' sx={{ listStyle: 'none', padding: 0, }}>
                 {pages.map((item) => (
