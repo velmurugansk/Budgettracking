@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button, Modal, Box } from "@mui/material"
+import { Button, Modal, Box, Typography} from "@mui/material"
 import { useThemeMode } from './../../Themecontext'
 
 const style = {
@@ -27,9 +27,9 @@ const Income = () => {
   };
 
   const { mode } = useThemeMode();
-  
+
   return (
-    <Box className='px-4 py-4 rounded-md' sx={{bgcolor: 'background.paper'}}>
+    <Box className='px-4 py-4 rounded-md' sx={{ bgcolor: 'background.paper' }}>
       <div className='flex items-center justify-between'>
         <div>
           <h5 className='text-xl'>Income Overview</h5>
@@ -38,16 +38,19 @@ const Income = () => {
         <Button variant='outlined' onClick={handleOpen}>Add Income</Button>
         <Modal
           open={open}
-          onClose={handleClose}
           aria-labelledby="child-modal-title"
           aria-describedby="child-modal-description"
+          onBackdropClick={null} // Disables close on backdrop click
+          disableEscapeKeyDown={true} // Disables close on Escape key press
         >
-          <Box sx={{ ...style}}>
-            <h2 id="child-modal-title">Text in a child modal</h2>
-            <p id="child-modal-description">
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-            </p>
-            <Button onClick={handleClose}>Close Child Modal</Button>
+          <Box sx={{ ...style }}>
+            <Typography id="modal-title" variant="h6" component="h2">
+              This Modal Should Not Close!
+            </Typography>
+            <Typography id="modal-description" sx={{ mt: 2 }}>
+              Click outside or press Escape. It should stay open.
+            </Typography>
+            <Button onClick={handleClose}>Close Me</Button>
           </Box>
         </Modal>
       </div>
