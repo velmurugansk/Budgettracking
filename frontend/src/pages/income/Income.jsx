@@ -1,19 +1,17 @@
 import React, { useState } from 'react'
-import { Button, Modal, Box, Typography} from "@mui/material"
+import { Button, Modal, Box, Typography, TextField, Divider} from "@mui/material"
 import { useThemeMode } from './../../Themecontext'
+import { IoCloseCircleOutline } from "react-icons/io5";
+import Emojipickermodal from "../../common/Emojipickermodal"
 
 const style = {
   position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '1px solid #ccc',
-  boxShadow: 24,
-  pt: 2,
-  px: 4,
-  pb: 3,
+  width: 600,
+  bgcolor: 'background.paper',  
+  boxShadow: 20,  
 };
 
 const Income = () => {
@@ -25,6 +23,17 @@ const Income = () => {
   const handleClose = () => {
     setOpen(false);
   };
+
+  const [incomedata,setIncomedata] = useState({
+    source:'',
+    amount:'',
+    date:'',
+    icon:''
+  })
+
+  const handleChange = (key, value) => {
+    setIncomedata({...incomedata, [key] : value})
+  }
 
   const { mode } = useThemeMode();
 
@@ -41,16 +50,52 @@ const Income = () => {
           aria-labelledby="child-modal-title"
           aria-describedby="child-modal-description"
           onBackdropClick={null} // Disables close on backdrop click
-          disableEscapeKeyDown={true} // Disables close on Escape key press
+          disableEscapeKeyDown={true} // Disables close on Escape key press          
         >
           <Box sx={{ ...style }}>
-            <Typography id="modal-title" variant="h6" component="h2">
-              This Modal Should Not Close!
+            <Typography id="modal-title" variant="h6" component="h2" className='p-2 flex items-center justify-between'>
+              Add Income <IoCloseCircleOutline className='cursor-pointer' onClick={handleClose} />
             </Typography>
-            <Typography id="modal-description" sx={{ mt: 2 }}>
-              Click outside or press Escape. It should stay open.
-            </Typography>
-            <Button onClick={handleClose}>Close Me</Button>
+            <Divider />
+            <Box id="modal-description" className="py-2 px-3">
+              <Emojipickermodal icon={incomedata.icon} onselect={(selectedicon) => handleChange("icon", selectedicon)} />
+              <TextField type='text' 
+                        // error={!!error} 
+                        name="source" 
+                        onChange={({target}) => handleChange("source", target.value)} 
+                        value={incomedata.source} 
+                        placeholder='Freelace, Salary, etc..' 
+                        required 
+                        fullWidth 
+                        autoFocus 
+                        size="small" 
+                        // helperText={error} 
+                        sx={{ my: 2}}/>
+              <TextField type='text' 
+                        // error={!!error} 
+                        name="amount" 
+                        // onChange={handleChanges} 
+                        value={incomedata.amount} 
+                        placeholder='Enter Amount' 
+                        required 
+                        fullWidth 
+                        autoFocus 
+                        size="small" 
+                        // helperText={error} 
+                        sx={{ my: 2}}/>
+              <TextField type='date' 
+                        // error={!!error} 
+                        name="source" 
+                        // onChange={handleChanges} 
+                        value={incomedata.source} 
+                        placeholder='Enter Source' 
+                        required 
+                        fullWidth 
+                        autoFocus 
+                        size="small" 
+                        // helperText={error} 
+                        sx={{ my: 2}}/>
+            </Box>            
           </Box>
         </Modal>
       </div>
