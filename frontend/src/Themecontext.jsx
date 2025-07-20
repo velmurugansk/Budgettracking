@@ -42,7 +42,7 @@ export function ThemeContextProvider({ children }) {
       }
     };
     mediaQuery.addEventListener('change', handleChange);
-    return () => media.removeEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
 

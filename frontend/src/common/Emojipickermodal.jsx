@@ -19,10 +19,12 @@ const Emojipickermodal = ({ icon, onselect }) => {
         </div>
         {isopen && (<div className='relative'>
             <button className='w-7 h-7 flex items-center justify-center' onClick={() => setIsopen(false)}><LuX /></button>
-            <EmojiPicker 
-            open={isopen}
-            onEmojiClick={handleImageselect} />
-        </div>)}        
+            <div className='absolute z-3'>
+                <EmojiPicker
+                    open={isopen}
+                    onEmojiClick={handleImageselect} />
+            </div>
+        </div>)}
     </div>
 }
 

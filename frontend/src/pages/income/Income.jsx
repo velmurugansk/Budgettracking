@@ -1,8 +1,11 @@
-import React, { useState } from 'react'
-import { Button, Modal, Box, Typography, TextField, Divider} from "@mui/material"
+import React, { useState, useEffect } from 'react'
+import { Button, Modal, Box, Typography, TextField, Divider } from "@mui/material"
 import { useThemeMode } from './../../Themecontext'
 import { IoCloseCircleOutline } from "react-icons/io5";
 import Emojipickermodal from "../../common/Emojipickermodal"
+import apiConf from '../../api/apiConf';
+import toast from 'react-hot-toast'
+import { useSelector } from "react-redux"
 
 const style = {
   position: 'absolute',
@@ -10,13 +13,18 @@ const style = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 600,
-  bgcolor: 'background.paper',  
-  boxShadow: 20,  
+  bgcolor: 'background.paper',
+  boxShadow: 20,
 };
 
 const Income = () => {
-
+  const [sourceerr, setsourceError] = useState('');
+  const [amounterr, setamountError] = useState('');
+  const [dateerr, setdateError] = useState('');
   const [open, setOpen] = useState(false);
+  useSelector((state) => console.log(state))
+  const uid = useSelector((state) => state?.cookie?.user?.id ? state?.cookie?.user?.id : state?.cookie?.auth?.userdata?.id)
+  console.log(uid)
   const handleOpen = () => {
     setOpen(true);
   };
@@ -24,16 +32,50 @@ const Income = () => {
     setOpen(false);
   };
 
-  const [incomedata,setIncomedata] = useState({
-    source:'',
-    amount:'',
-    date:'',
-    icon:''
+  const [incomedata, setIncomedata] = useState({
+    source: '',
+    amount: '',
+    date: '',
+    icon: ''
   })
 
   const handleChange = (key, value) => {
-    setIncomedata({...incomedata, [key] : value})
+    setIncomedata({ ...incomedata, [key]: value })
   }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    let amount, source, date = '';
+    amount = incomedata.amount;
+    source = incomedata.source;
+    date = incomedata.date;
+
+    !source ? setsourceError("Please enter source value!") : setsourceError('');
+    !amount ? setamountError("Please enter amount value!") : setamountError('');
+    !date ? setdateError("Please enter date value!") : setdateError('');
+
+    if (amount && source && date) {
+      const responsedata = await apiConf.post('/income/add', incomedata);
+      if (responsedata?.data?.status) {
+        toast.success(responsedata.data.message);
+        handleClose();
+      } else {
+        toast.error(responsedata.data.message);
+      }
+    }
+
+  }
+
+  const getIncomeslist = async () => {    
+    let obj = { id: uid }
+    if(uid) {
+      const responsedata = await apiConf.get('/income/list', obj);
+    }    
+  }
+
+  useEffect(() => {
+    getIncomeslist(uid);
+  }, [uid])
 
   const { mode } = useThemeMode();
 
@@ -59,46 +101,49 @@ const Income = () => {
             <Divider />
             <Box id="modal-description" className="py-2 px-3">
               <Emojipickermodal icon={incomedata.icon} onselect={(selectedicon) => handleChange("icon", selectedicon)} />
-              <TextField type='text' 
-                        // error={!!error} 
-                        name="source" 
-                        onChange={({target}) => handleChange("source", target.value)} 
-                        value={incomedata.source} 
-                        placeholder='Freelace, Salary, etc..' 
-                        required 
-                        fullWidth 
-                        autoFocus 
-                        size="small" 
-                        // helperText={error} 
-                        sx={{ my: 2}}/>
-              <TextField type='text' 
-                        // error={!!error} 
-                        name="amount" 
-                        // onChange={handleChanges} 
-                        value={incomedata.amount} 
-                        placeholder='Enter Amount' 
-                        required 
-                        fullWidth 
-                        autoFocus 
-                        size="small" 
-                        // helperText={error} 
-                        sx={{ my: 2}}/>
-              <TextField type='date' 
-                        // error={!!error} 
-                        name="source" 
-                        // onChange={handleChanges} 
-                        value={incomedata.source} 
-                        placeholder='Enter Source' 
-                        required 
-                        fullWidth 
-                        autoFocus 
-                        size="small" 
-                        // helperText={error} 
-                        sx={{ my: 2}}/>
-            </Box>            
+              <TextField type='text'
+                error={!!sourceerr}
+                name="source"
+                onChange={({ target }) => handleChange("source", target.value)}
+                value={incomedata.source}
+                placeholder='Freelace, Salary, etc..'
+                required
+                fullWidth
+                autoFocus
+                size="small"
+                helperText={sourceerr}
+                sx={{ my: 2 }} />
+              <TextField type='text'
+                error={!!amounterr}
+                name="amount"
+                onChange={({ target }) => handleChange("amount", target.value)}
+                value={incomedata.amount}
+                placeholder='Enter Amount'
+                required
+                fullWidth
+                autoFocus
+                size="small"
+                helperText={amounterr}
+                sx={{ my: 2 }} />
+              <TextField type='date'
+                error={!!dateerr}
+                name="date"
+                onChange={({ target }) => handleChange("date", target.value)}
+                value={incomedata.date}
+                placeholder='Select Date'
+                required
+                fullWidth
+                autoFocus
+                size="small"
+                helperText={dateerr}
+                sx={{ my: 2 }} />
+
+              <Button variant='contained' className='w-full bg-[#2b2b2b]' sx={{ my: 2, backgroundColor: '#2b2b2b' }} onClick={handleSubmit}>Add Income</Button>
+            </Box>
           </Box>
         </Modal>
       </div>
+
     </Box>
   )
 }

@@ -17,11 +17,13 @@ const addIncome = async(req, res) => {
     }
 }
 
-const getallIncome = async(req, res) => {    
-    const userId = req.body.userId;
+const getallIncome = async(req, res) => {     
+    console.log(req)   
+    const userId = req.body.id;    
     const {startDate, endDate} = req.body;    
     try {
         let incomes;
+        console.log(new ObjectId(userId), userId)
         if(startDate && endDate) {
             incomes = await Income.find({userId : new ObjectId(userId),date: {
                 $gte: startDate, 
@@ -29,6 +31,7 @@ const getallIncome = async(req, res) => {
               }});
         } else {
             incomes = await Income.find({userId : new ObjectId(userId)}).sort({date: -1}).exec();
+            console.log(incomes)
         }
                  
         if(!incomes){
