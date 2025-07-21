@@ -6,6 +6,8 @@ import Emojipickermodal from "../../common/Emojipickermodal"
 import apiConf from '../../api/apiConf';
 import toast from 'react-hot-toast'
 import { useSelector } from "react-redux"
+import { DataGrid } from '@mui/x-data-grid';
+import moment from 'moment';
 
 const style = {
   position: 'absolute',
@@ -22,9 +24,17 @@ const Income = () => {
   const [amounterr, setamountError] = useState('');
   const [dateerr, setdateError] = useState('');
   const [open, setOpen] = useState(false);
-  useSelector((state) => console.log(state))
+  const [incomelists, setIncomelists] = useState([]);
   const uid = useSelector((state) => state?.cookie?.user?.id ? state?.cookie?.user?.id : state?.cookie?.auth?.userdata?.id)
-  console.log(uid)
+
+  const columns = [{ field: 'source', headerName: 'Source' ,flex: 1, minWidth: 140 },
+  { field: 'amount', headerName: 'Amount', flex: 0.5, minWidth: 120 },
+  { field: 'date', headerName: 'Date', flex: 0.7, minWidth: 140, valueFormatter: (params) => {        
+        if (!params) return ''; 
+        return moment.utc(params).local().format('DD-MM-YYYY h:mm a');
+      }, }];
+  const paginationModel = { page: 0, pageSize: 5 };
+
   const handleOpen = () => {
     setOpen(true);
   };
@@ -66,11 +76,18 @@ const Income = () => {
 
   }
 
-  const getIncomeslist = async () => {    
+  const getIncomeslist = async () => {
     let obj = { id: uid }
-    if(uid) {
-      const responsedata = await apiConf.get('/income/list', obj);
-    }    
+    if (uid) {
+      const responsedata = await apiConf.get('/income/list', { params: obj });
+      let resultData = responsedata?.data?.status ? responsedata?.data?.data : [];
+      const dataWithIds = resultData.map((row, index) => ({        
+        id: row._id || index, // Use _id if available, otherwise use index as fallback
+        ...row,
+      }));
+      
+      resultData && resultData.length > 0 ? setIncomelists(dataWithIds) : [];
+    }
   }
 
   useEffect(() => {
@@ -143,7 +160,15 @@ const Income = () => {
           </Box>
         </Modal>
       </div>
-
+      <div className='mt-3'>
+        <DataGrid
+          rows={incomelists}
+          columns={columns}
+          initialState={{ pagination: { paginationModel } }}
+          pageSizeOptions={[5, 10]}
+          sx={{ border: 0 }}
+        />
+      </div>
     </Box>
   )
 }
