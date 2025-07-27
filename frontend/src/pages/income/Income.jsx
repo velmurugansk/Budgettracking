@@ -8,6 +8,7 @@ import toast from 'react-hot-toast'
 import { useSelector } from "react-redux"
 import { DataGrid } from '@mui/x-data-grid';
 import moment from 'moment';
+import { BarChart, Bar, Rectangle, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const style = {
   position: 'absolute',
@@ -27,12 +28,14 @@ const Income = () => {
   const [incomelists, setIncomelists] = useState([]);
   const uid = useSelector((state) => state?.cookie?.user?.id ? state?.cookie?.user?.id : state?.cookie?.auth?.userdata?.id)
 
-  const columns = [{ field: 'source', headerName: 'Source' ,flex: 1, minWidth: 140 },
+  const columns = [{ field: 'source', headerName: 'Source', flex: 1, minWidth: 140 },
   { field: 'amount', headerName: 'Amount', flex: 0.5, minWidth: 120 },
-  { field: 'date', headerName: 'Date', flex: 0.7, minWidth: 140, valueFormatter: (params) => {        
-        if (!params) return ''; 
-        return moment.utc(params).local().format('DD-MM-YYYY h:mm a');
-      }, }];
+  {
+    field: 'date', headerName: 'Date', flex: 0.7, minWidth: 140, valueFormatter: (params) => {
+      if (!params) return '';
+      return moment.utc(params).local().format('DD-MM-YYYY h:mm a');
+    },
+  }];
   const paginationModel = { page: 0, pageSize: 5 };
 
   const handleOpen = () => {
@@ -42,6 +45,8 @@ const Income = () => {
     setOpen(false);
   };
 
+  const [chartData, setChartdata] = useState([]);
+  
   const [incomedata, setIncomedata] = useState({
     source: '',
     amount: '',
@@ -81,18 +86,30 @@ const Income = () => {
     if (uid) {
       const responsedata = await apiConf.get('/income/list', { params: obj });
       let resultData = responsedata?.data?.status ? responsedata?.data?.data : [];
-      const dataWithIds = resultData.map((row, index) => ({        
+      const dataWithIds = resultData.map((row, index) => ({
         id: row._id || index, // Use _id if available, otherwise use index as fallback
         ...row,
       }));
+
+      resultData && resultData.length > 0 ? setIncomelists(dataWithIds) : '';
+      if (resultData && resultData.length > 0) {
+        setChartdata([]);
+        dataWithIds.map(item => {          
+          setChartdata(prevData => [...prevData, {
+            name : item.source,
+            xaxis: moment.utc(item.date).local().format('DD-MM-YYYY'),
+            amount: item.amount
+          }])
+        })
+      }
       
-      resultData && resultData.length > 0 ? setIncomelists(dataWithIds) : [];
     }
   }
 
   useEffect(() => {
     getIncomeslist(uid);
   }, [uid])
+
 
   const { mode } = useThemeMode();
 
@@ -168,6 +185,28 @@ const Income = () => {
           pageSizeOptions={[5, 10]}
           sx={{ border: 0 }}
         />
+      </div>
+      <div className="mt-3" style={{ height: '300px' }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            width={500}
+            height={300}
+            data={chartData}
+            margin={{
+              top: 5,
+              right: 30,
+              left: 20,
+              bottom: 5,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="xaxis" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="amount" fill="#8884d8" activeBar={<Rectangle fill="pink" stroke="blue" />} />            
+          </BarChart>
+        </ResponsiveContainer>
       </div>
     </Box>
   )

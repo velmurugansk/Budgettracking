@@ -38,7 +38,7 @@ const Layout = () => {
   return (
     <ThemeContextProvider>    
       <Header />
-      <div className="h-screen px-10 py-3">
+      <div className="min-h-screen px-10 py-3">
         <Outlet />
       </div>      
       <Footer />
