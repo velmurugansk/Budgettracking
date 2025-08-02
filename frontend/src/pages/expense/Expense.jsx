@@ -1,7 +1,7 @@
-import React, {useState} from 'react'
+import React, { useState, useEffect } from 'react'
 import { DataGrid } from '@mui/x-data-grid';
 import moment from 'moment';
-import { BarChart, Bar, Rectangle, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { Button, Modal, Box, Typography, TextField, Divider } from "@mui/material"
 import { useThemeMode } from './../../Themecontext'
 import { IoCloseCircleOutline } from "react-icons/io5";
@@ -21,22 +21,29 @@ const style = {
 };
 
 const Expense = () => {
-  const [sourceerr, setsourceError] = useState('');
+  const [catgoryerr, setcategoryError] = useState('');
   const [amounterr, setamountError] = useState('');
   const [dateerr, setdateError] = useState('');
   const [open, setOpen] = useState(false);
-  const [incomelists, setIncomelists] = useState([]);
+  const [expenselists, setExpenselists] = useState([]);
   const uid = useSelector((state) => state?.cookie?.user?.id ? state?.cookie?.user?.id : state?.cookie?.auth?.userdata?.id)
 
   const handleOpen = () => {
+    setExpensedata({
+      category: '',
+      amount: '',
+      date: '',
+      icon: ''
+    })
     setOpen(true);
   };
   const handleClose = () => {
     setOpen(false);
   };
 
+  const [chartData, setChartdata] = useState([]);
   const [expensedata, setExpensedata] = useState({
-    source: '',
+    category: '',
     amount: '',
     date: '',
     icon: ''
@@ -48,16 +55,16 @@ const Expense = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    let amount, source, date = '';
+    let amount, category, date = '';
     amount = expensedata.amount;
-    source = expensedata.source;
+    category = expensedata.category;
     date = expensedata.date;
 
-    !source ? setsourceError("Please enter source value!") : setsourceError('');
+    !category ? setcategoryError("Please enter category value!") : setcategoryError('');
     !amount ? setamountError("Please enter amount value!") : setamountError('');
     !date ? setdateError("Please enter date value!") : setdateError('');
 
-    if (amount && source && date) {
+    if (amount && category && date) {
       const responsedata = await apiConf.post('/expense/add', expensedata);
       if (responsedata?.data?.status) {
         toast.success(responsedata.data.message);
@@ -66,8 +73,52 @@ const Expense = () => {
         toast.error(responsedata.data.message);
       }
     }
-
   }
+
+  const getExpenselists = async () => {
+    let obj = {
+      id: uid,
+      startDate: new Date(moment().startOf('month')),
+      endDate: new Date(moment().endOf('month'))
+    }
+
+    if (uid) {
+      const responsedata = await apiConf.get('/expense/list', { params: obj });
+      let resultData = responsedata?.data?.status ? responsedata?.data?.data : [];
+      const dataWithIds = resultData.map((row, index) => ({
+        id: row._id || index, // Use _id if available, otherwise use index as fallback
+        ...row,
+      }));
+
+      resultData && resultData.length > 0 ? setExpenselists(dataWithIds) : '';
+      if (resultData && resultData.length > 0) {
+        setChartdata([]);
+        dataWithIds.map(item => {
+          setChartdata(prevData => [...prevData, {
+            name: item.category,
+            xaxis: moment.utc(item.date).local().format('DD-MM-YYYY'),
+            amount: item.amount
+          }])
+        })
+      }
+
+    }
+  }
+
+  const columns = [{ field: 'category', headerName: 'Category', flex: 1, minWidth: 140 },
+  { field: 'amount', headerName: 'Amount', flex: 0.5, minWidth: 120 },
+  {
+    field: 'date', headerName: 'Date', flex: 0.7, minWidth: 140, valueFormatter: (params) => {
+      if (!params) return '';
+      return moment.utc(params).local().format('DD-MM-YYYY h:mm a');
+    },
+  }];
+  const paginationModel = { page: 0, pageSize: 5 };
+
+
+  useEffect(() => {
+    getExpenselists();
+  }, [uid])
 
   return (
     <Box className='px-4 py-4 rounded-md' sx={{ bgcolor: 'background.paper' }}>
@@ -92,16 +143,16 @@ const Expense = () => {
             <Box id="modal-description" className="py-2 px-3">
               <Emojipickermodal icon={expensedata.icon} onselect={(selectedicon) => handleChange("icon", selectedicon)} />
               <TextField type='text'
-                error={!!sourceerr}
-                name="source"
-                onChange={({ target }) => handleChange("source", target.value)}
-                value={expensedata.source}
+                error={!!catgoryerr}
+                name="category"
+                onChange={({ target }) => handleChange("category", target.value)}
+                value={expensedata.category}
                 placeholder='Rent, Food, etc..'
                 required
                 fullWidth
                 autoFocus
                 size="small"
-                helperText={sourceerr}
+                helperText={catgoryerr}
                 sx={{ my: 2 }} />
               <TextField type='text'
                 error={!!amounterr}
@@ -128,10 +179,39 @@ const Expense = () => {
                 helperText={dateerr}
                 sx={{ my: 2 }} />
 
-              <Button variant='contained' className='w-full bg-[#2b2b2b]' sx={{ my: 2, backgroundColor: '#2b2b2b' }} onClick={handleSubmit}>Add Income</Button>
+              <Button variant='contained' className='w-full bg-[#2b2b2b]' sx={{ my: 2, backgroundColor: '#2b2b2b' }} onClick={handleSubmit}>Add Expense</Button>
             </Box>
           </Box>
         </Modal>
+      </div>
+      <div className="mt-3" style={{ height: '300px' }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart
+            width={500}
+            height={400}
+            data={chartData}
+            margin={{
+              top: 10,
+              right: 30,
+              left: 0,
+              bottom: 0,
+            }}
+          >
+            <XAxis dataKey="xaxis" />
+            <YAxis />
+            <Tooltip />
+            <Area type="monotone" dataKey="amount" stroke="#8884d8" fill="#8884d8" />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
+      <div className='mt-3'>
+        <DataGrid
+          rows={expenselists}
+          columns={columns}
+          initialState={{ pagination: { paginationModel } }}
+          pageSizeOptions={[5, 10]}
+          sx={{ border: 0 }}
+        />
       </div>
     </Box>
   )

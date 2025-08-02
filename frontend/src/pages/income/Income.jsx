@@ -114,8 +114,6 @@ const Income = () => {
   }, [uid])
 
 
-  const { mode } = useThemeMode();
-
   return (
     <Box className='px-4 py-4 rounded-md' sx={{ bgcolor: 'background.paper' }}>
       <div className='flex items-center justify-between'>

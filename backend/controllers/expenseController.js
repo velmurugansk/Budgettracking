@@ -17,20 +17,19 @@ const addExpense = async (req, res) => {
     }
 }
 
-const getallExpense = async (req, res) => {
-    const userId = req.body.userId;
-    const { startDate, endDate } = req.body;
+const getallExpense = async (req, res) => {    
+    const { startDate, endDate, id } = req.query;
     try {
         let expense;
         if (startDate && endDate) {
             expense = await Expense.find({
-                userId: new ObjectId(userId), date: {
+                userId: new ObjectId(id), date: {
                     $gte: startDate,
                     $lte: endDate
                 }
             });
         } else {
-            expense = await Expense.find({ userId: new ObjectId(userId) }).sort({ date: -1 }).exec();
+            expense = await Expense.find({ userId: new ObjectId(id) }).sort({ date: -1 }).exec();
         }
 
         if (!expense) {
