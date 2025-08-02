@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux'
 import { persistor } from '../store/store'
 import { setAuth, logout } from '../reducers/userVerify'
 import { useEffect } from 'react'
+import {ThemeContextProvider } from '../Themecontext'
 
 const Layout = () => {
   const location = useLocation();
@@ -35,11 +36,13 @@ const Layout = () => {
   }
 
   return (
-    <>
+    <ThemeContextProvider>    
       <Header />
-      <Outlet />
+      <div className="min-h-screen px-10 py-3">
+        <Outlet />
+      </div>      
       <Footer />
-    </>
+    </ThemeContextProvider>
   )
 }
 

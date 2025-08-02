@@ -11,6 +11,7 @@ const userLogin = async (req, res) => {
             if(pwd) {
                 let id = finduser._id;
                 let name = finduser.name;
+                
                 const token = await jwt.sign({id,name}, process.env.SECRET_KEY,{expiresIn:'1d'});                
                 res.cookie('accessToken', token, {
                     expires : new Date(Date.now() + 1*24*60*60*1000), 
@@ -19,7 +20,7 @@ const userLogin = async (req, res) => {
                     path: '/',
                     secure: false
                 })
-                res.status(200).json({"status": true,"message":'Login Successful!',token});
+                res.status(200).json({"status": true,"message":'Login Successful!',token, data:{id,name}});
             } else {
                 return res.status(401).json({"status": false, message: 'Invalid credentials' });
             }
@@ -47,9 +48,8 @@ const userRegister = async(req, res) => {
     }
 }
 
-const userDetails =async(req, res) => {
-    console.log(req)
-    const {id} = req.body;
+const userDetails =async(req, res) => {        
+    const {id} = req.query;    
     try{
         const finduser = await user.findOne({_id:id});
         if(finduser) {

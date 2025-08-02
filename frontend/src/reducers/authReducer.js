@@ -3,16 +3,16 @@ import apiConf from '../api/apiConf'
 
 export const userLogin = createAsyncThunk('auth/login', async (info) => {
     try {
-        const response = await apiConf.post('/auth/login', info, { withCredentials: true });        
+        const response = await apiConf.post('/auth/login', info, { withCredentials: true });
         return response;
-    } catch (error) {        
+    } catch (error) {
         return error.response.data;
     }
 })
 
-export const userRegister = createAsyncThunk('auth/register', async(info) => {
+export const userRegister = createAsyncThunk('auth/register', async (info) => {
     try {
-        const response = await apiConf.post('/auth/register', info, { withCredentials: true });        
+        const response = await apiConf.post('/auth/register', info, { withCredentials: true });
         return response;
     } catch (error) {
         return error.response.data;
@@ -20,7 +20,7 @@ export const userRegister = createAsyncThunk('auth/register', async(info) => {
 })
 
 const initialState = {
-    errorMessage:'',
+    errorMessage: '',
     loading: '',
     userdata: '',
     successMessage: '',
@@ -29,9 +29,9 @@ const initialState = {
 }
 
 const authSlice = new createSlice({
-    name : "auth",
+    name: "auth",
     initialState,
-    reducers:{
+    reducers: {
         clearErrorMessage: (state) => {
             state.errorMessage = '';
         },
@@ -41,23 +41,28 @@ const authSlice = new createSlice({
         logoutState: (state) => {
             state.errorMessage = '';
             state.loading = '';
-            state.userdata = '';
             state.successMessage = '';
+            state.userdata = '';
             state.isAuthenticate = false;
         }
     },
-    extraReducers:(builder) => {
+    extraReducers: (builder) => {
         builder.addCase(userLogin.pending, (state) => {
             state.loading = true;
         }).addCase(userLogin.rejected, (state, { payload }) => {
             state.loading = '';
             state.errorMessage = payload.error;
             state.isAuthenticate = false;
-        }).addCase(userLogin.fulfilled, (state, {payload}) => {
+        }).addCase(userLogin.fulfilled, (state, { payload }) => {            
             state.loading = '';
-            state.successMessage = payload.data.message;
-            state.userdata = payload.data.data;
-            state.isAuthenticate = true;
+            if (payload?.status) {
+                state.isAuthenticate = false;
+                state.errorMessage = payload.message;
+            } else {
+                state.successMessage = payload?.data?.message;
+                state.userdata = payload?.data?.data;
+                state.isAuthenticate = true;
+            }
         }).addCase(userRegister.pending, (state) => {
             state.isRegistered = false;
         }).addCase(userRegister.rejected, (state, { payload }) => {
@@ -65,7 +70,7 @@ const authSlice = new createSlice({
             state.errorMessage = payload.error;
         }).addCase(userRegister.fulfilled, (state, { payload }) => {
             state.isRegistered = true;
-            state.userdata = payload.data.data;
+            state.userdata = payload?.data?.data;
         })
     }
 })

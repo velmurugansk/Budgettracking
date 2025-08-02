@@ -4,7 +4,7 @@ const moment = require('moment');
 const { ObjectId } = require('mongodb')
 
 const dashboardData = async (req, res) => {
-    const userId = req.body.userId;
+    const userId = req.body.id;
     try {
         const currentmonthexpense = await Expense.aggregate([
             {

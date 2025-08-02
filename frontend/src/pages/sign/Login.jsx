@@ -10,7 +10,10 @@ import {validateEmail, validatePassword} from '../../utils'
 const Login = () => {
 const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [userdata, setUserdata] = useState({});
+  const [userdata, setUserdata] = useState({
+    "email":'',
+    "password":''
+  });
   const [error, setError] = useState('');
   const [pwderr, setPwderr] = useState('');
 
@@ -27,20 +30,21 @@ const dispatch = useDispatch();
     if(!isvalidmail && !validpassword) {      
       const data = dispatch(userLogin(userdata));      
       data.then(unwrapResult)
-      .then((response) => {        
-        const result =  response.data.status;   
-        const token = response.data.token;
+      .then((response) => {               
+        const result =  response?.data?.status ? response?.data?.status : response?.status;   
+        const token = response?.data?.token ? response?.data?.token : '';
+        console.log(result)
         if(result) {
           toast.success(response.data.message);
           localStorage.setItem("token",token)
           navigate("/");
         } else {
-          toast.error(response.data.message);
+          toast.error(response.message);
         }
         
       })
-      .catch((error) => {
-        console.error('Error:', error); // Handle errors
+      .catch(() => {         
+        console.log('Error:', error); // Handle errors
       });
     }
   }
@@ -61,7 +65,7 @@ const dispatch = useDispatch();
           autoFocus 
           size="small" 
           helperText={error} 
-          sx={{ my: 2}}/>
+          sx={{ my: 2}} />
           <TextField type='password' 
           error={!!pwderr} 
           name="password" 
