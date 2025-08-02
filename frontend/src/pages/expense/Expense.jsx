@@ -74,7 +74,7 @@ const Expense = () => {
       <div className='flex items-center justify-between'>
         <div>
           <h5 className='text-xl'>Expense Overview</h5>
-          <p className='font-light text-xs'>Track your earnings over time and analyze your income trends</p>
+          <p className='font-light text-xs'>Track your spending trends over time and gain insights into  where your money goes</p>
         </div>
         <Button variant='outlined' onClick={handleOpen}>Add Expense</Button>
         <Modal
@@ -96,7 +96,7 @@ const Expense = () => {
                 name="source"
                 onChange={({ target }) => handleChange("source", target.value)}
                 value={expensedata.source}
-                placeholder='Freelace, Salary, etc..'
+                placeholder='Rent, Food, etc..'
                 required
                 fullWidth
                 autoFocus

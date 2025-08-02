@@ -8,7 +8,7 @@ import toast from 'react-hot-toast'
 import { useSelector } from "react-redux"
 import { DataGrid } from '@mui/x-data-grid';
 import moment from 'moment';
-import { BarChart, Bar, Rectangle, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, Rectangle, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const style = {
   position: 'absolute',
@@ -82,7 +82,10 @@ const Income = () => {
   }
 
   const getIncomeslist = async () => {
-    let obj = { id: uid }
+    let obj = { id: uid,
+      startDate: new Date(moment().startOf('month')),
+      endDate : new Date(moment().endOf('month'))
+     }
     if (uid) {
       const responsedata = await apiConf.get('/income/list', { params: obj });
       let resultData = responsedata?.data?.status ? responsedata?.data?.data : [];
@@ -140,7 +143,7 @@ const Income = () => {
                 name="source"
                 onChange={({ target }) => handleChange("source", target.value)}
                 value={incomedata.source}
-                placeholder='Freelace, Salary, etc..'
+                placeholder='Freelance, Salary, etc..'
                 required
                 fullWidth
                 autoFocus
@@ -177,15 +180,6 @@ const Income = () => {
           </Box>
         </Modal>
       </div>
-      <div className='mt-3'>
-        <DataGrid
-          rows={incomelists}
-          columns={columns}
-          initialState={{ pagination: { paginationModel } }}
-          pageSizeOptions={[5, 10]}
-          sx={{ border: 0 }}
-        />
-      </div>
       <div className="mt-3" style={{ height: '300px' }}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
@@ -198,8 +192,7 @@ const Income = () => {
               left: 20,
               bottom: 5,
             }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
+          >            
             <XAxis dataKey="xaxis" />
             <YAxis />
             <Tooltip />
@@ -208,6 +201,15 @@ const Income = () => {
           </BarChart>
         </ResponsiveContainer>
       </div>
+      <div className='mt-3'>
+        <DataGrid
+          rows={incomelists}
+          columns={columns}
+          initialState={{ pagination: { paginationModel } }}
+          pageSizeOptions={[5, 10]}
+          sx={{ border: 0 }}
+        />
+      </div>      
     </Box>
   )
 }

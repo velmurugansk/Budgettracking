@@ -1,7 +1,7 @@
 const Income = require('../models/incomeModel');
 const { ObjectId } = require('mongodb')
 
-const addIncome = async(req, res) => {    
+const addIncome = async(req, res) => {        
     const userId = req.id;
     const {icon, source, amount, date} = req.body;
     try {
@@ -17,18 +17,18 @@ const addIncome = async(req, res) => {
     }
 }
 
-const getallIncome = async(req, res) => {         
-    const userId = req.query.id;    
-    const {startDate, endDate} = req.body ? req.body : '';    
+const getallIncome = async(req, res) => {  
+       
+    const {startDate, endDate, id} = req.query;    
     try {
         let incomes;        
         if(startDate && endDate) {
-            incomes = await Income.find({userId : new ObjectId(userId),date: {
+            incomes = await Income.find({userId : new ObjectId(id),date: {
                 $gte: startDate, 
                 $lte: endDate   
               }});
         } else {
-            incomes = await Income.find({userId : new ObjectId(userId)}).sort({date: -1}).exec();            
+            incomes = await Income.find({userId : new ObjectId(id)}).sort({date: -1}).exec();            
         }
                  
         if(!incomes){
