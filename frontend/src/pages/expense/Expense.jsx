@@ -69,6 +69,7 @@ const Expense = () => {
       if (responsedata?.data?.status) {
         toast.success(responsedata.data.message);
         handleClose();
+        getExpenselists();
       } else {
         toast.error(responsedata.data.message);
       }

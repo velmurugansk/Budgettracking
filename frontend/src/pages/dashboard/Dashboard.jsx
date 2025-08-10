@@ -35,7 +35,7 @@ const Dashboard = () => {
   }, [uid])
 
   return (
-    <Box className='px-4 py-4 rounded-md' sx={{ bgcolor: 'background.paper' }}>
+    <Box className='px-4 py-4 rounded-md'>
       <Cardssection income={currentIncome} expense={currentExpense} remaining={currentRemaining} />
       <Recenttransaction />
     </Box>

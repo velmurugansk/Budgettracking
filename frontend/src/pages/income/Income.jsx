@@ -74,6 +74,7 @@ const Income = () => {
       if (responsedata?.data?.status) {
         toast.success(responsedata.data.message);
         handleClose();
+        getIncomeslist();
       } else {
         toast.error(responsedata.data.message);
       }
