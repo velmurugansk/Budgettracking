@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Box } from '@mui/material'
+import { Box, Grid } from '@mui/material'
 import moment from 'moment';
 import apiConf from '../../api/apiConf';
 import { useSelector } from "react-redux"
@@ -11,6 +11,7 @@ const Dashboard = () => {
   const [currentIncome, setCurrentincome] = useState(0);
   const [currentExpense, setCurrentexpense] = useState(0);
   const [currentRemaining, setCurrentremaining] = useState(0);
+  const [recentTransaction, setRecenttransaction] = useState([]);
   const getDashboarddata = async () => {
     let obj = {
       id: uid,      
@@ -26,6 +27,8 @@ const Dashboard = () => {
       setCurrentincome(resultData?.currentmonthdata?.income ? resultData?.currentmonthdata?.income : 0);
       setCurrentexpense(resultData?.currentmonthdata?.expense ? resultData?.currentmonthdata?.expense : 0);
       setCurrentremaining(resultData?.currentmonthdata?.remaining ? resultData?.currentmonthdata?.remaining : 0);
+
+      setRecenttransaction(resultData?.combinedtransaction ? resultData?.combinedtransaction : []);
     }
     
   }
@@ -37,7 +40,14 @@ const Dashboard = () => {
   return (
     <Box className='px-4 py-4 rounded-md'>
       <Cardssection income={currentIncome} expense={currentExpense} remaining={currentRemaining} />
-      <Recenttransaction />
+      <Grid spacing={2} container>
+        <Grid size={6}>
+          <Recenttransaction recenttransaction={recentTransaction} />
+        </Grid>
+        <Grid size={6}>
+
+        </Grid>
+      </Grid>      
     </Box>
   )
 }

@@ -228,13 +228,27 @@ const dashboardData = async (req, res) => {
                 }
             },
             {
-                $sort: {
-                    date: 1 // Sort ascending by date
+                $group: {
+                    _id: "$_id", // Group by the unique _id of each transaction
+                    // Keep the first document for each _id found
+                    doc: { $first: "$$ROOT" }
                 }
+            },
+            // Replace the root document with the grouped document
+            {
+                $replaceRoot: { newRoot: "$doc" }
+            },
+            {
+                $sort: {
+                    date: -1 // Sort ascending by date
+                }
+            },
+            {
+                $limit: 10 // The new stage to limit the results
             }
         ])
 
-        
+
         res.status(200).json({
             "status": true, data: {
                 currentmonthdata: {
