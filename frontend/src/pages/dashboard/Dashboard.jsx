@@ -5,6 +5,7 @@ import apiConf from '../../api/apiConf';
 import { useSelector } from "react-redux"
 import Recenttransaction from './Recenttransaction'
 import Cardssection from './Cardssection'
+import Finanicaloverview from './Finanicaloverview'
 
 const Dashboard = () => {
   const uid = useSelector((state) => state?.cookie?.user?.id ? state?.cookie?.user?.id : state?.cookie?.auth?.userdata?.id)
@@ -40,12 +41,12 @@ const Dashboard = () => {
   return (
     <Box className='px-4 py-4 rounded-md'>
       <Cardssection income={currentIncome} expense={currentExpense} remaining={currentRemaining} />
-      <Grid spacing={2} container>
+      <Grid container spacing={2}>
         <Grid size={6}>
           <Recenttransaction recenttransaction={recentTransaction} />
         </Grid>
         <Grid size={6}>
-
+          <Finanicaloverview income={currentIncome} expense={currentExpense} remaining={currentRemaining} />
         </Grid>
       </Grid>      
     </Box>
