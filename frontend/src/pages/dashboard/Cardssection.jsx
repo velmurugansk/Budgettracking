@@ -28,7 +28,7 @@ const Cardssection = ({ income, remaining, expense }) => {
         <Box>
             <Grid container spacing={2}>
                 {cards.map(item => {
-                    return <Grid size={4} key={item.key}>
+                    return <Grid size={{ xs: 12, sm: 4 }} key={item.key}>
                         <Box className='flex p-3 rounded-md items-center' sx={{ bgcolor: 'background.paper' }}>
                             <div className='px-2'><Avatar sx={{ bgcolor: item.avathorcolor, height: '45px', width: '45px' }}>{item.icon}</Avatar></div>
                             <div><p className='text-xs'>{item.title }</p>

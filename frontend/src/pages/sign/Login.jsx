@@ -32,8 +32,7 @@ const dispatch = useDispatch();
       data.then(unwrapResult)
       .then((response) => {               
         const result =  response?.data?.status ? response?.data?.status : response?.status;   
-        const token = response?.data?.token ? response?.data?.token : '';
-        console.log(result)
+        const token = response?.data?.token ? response?.data?.token : '';        
         if(result) {
           toast.success(response.data.message);
           localStorage.setItem("token",token)

@@ -15,7 +15,12 @@ const dashboardData = async (req, res) => {
                         $lt: new Date(moment().endOf('day').utc().toISOString())
                     }
                 }
-            }
+            },
+            {
+                $sort: {
+                    date: -1 
+                }
+            }            
         ])
 
         const currentMonthincomes = await Income.aggregate([
@@ -244,7 +249,7 @@ const dashboardData = async (req, res) => {
                 }
             },
             {
-                $limit: 10 // The new stage to limit the results
+                $limit: 7 // The new stage to limit the results
             }
         ])
 

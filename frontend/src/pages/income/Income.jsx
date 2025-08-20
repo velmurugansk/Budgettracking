@@ -98,6 +98,7 @@ const Income = () => {
       resultData && resultData.length > 0 ? setIncomelists(dataWithIds) : '';
       if (resultData && resultData.length > 0) {
         setChartdata([]);
+        dataWithIds.sort((a, b) => new Date(a.date) - new Date(b.date));
         dataWithIds.map(item => {          
           setChartdata(prevData => [...prevData, {
             name : item.source,
