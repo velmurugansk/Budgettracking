@@ -23,6 +23,23 @@ const dashboardData = async (req, res) => {
             }            
         ])
 
+        const currentmonthincome = await Income.aggregate([
+            {
+                $match: {
+                    userId: new ObjectId(userId),
+                    date: {
+                        $gte: new Date(moment().startOf('month').utc().toISOString()),
+                        $lt: new Date(moment().endOf('day').utc().toISOString())
+                    }
+                }
+            },
+            {
+                $sort: {
+                    date: -1 
+                }
+            }            
+        ])
+
         const currentMonthincomes = await Income.aggregate([
             {
                 $match: {
@@ -58,7 +75,7 @@ const dashboardData = async (req, res) => {
                 $match: {
                     userId: new ObjectId(userId),
                     date: {
-                        $gte: new Date(moment().subtract(2, 'months').startOf('month').utc().toISOString()),
+                        $gte: new Date(moment().subtract(1, 'months').startOf('month').utc().toISOString()),
                         $lt: new Date(moment().endOf('day').utc().toISOString())
                     }
                 }
@@ -66,24 +83,21 @@ const dashboardData = async (req, res) => {
             {
                 $group: {
                     _id: {
-                        year: { $year: "$date" },
-                        month: { $month: "$date" }
+                        category: "$category"
                     },
-                    totalIncome: { $sum: "$amount" }
+                    totalExpense: { $sum: "$amount" }
                 }
             },
             {
                 $project: {
                     _id: 0,
-                    year: "$_id.year",
-                    month: "$_id.month",
-                    totalIncome: 1
+                    category: "$_id.category",
+                    totalExpense: 1
                 }
             },
             {
-                $sort: {
-                    year: -1,
-                    month: -1
+                $sort: {                    
+                    category:1 
                 }
             }
 
@@ -94,7 +108,7 @@ const dashboardData = async (req, res) => {
                 $match: {
                     userId: new ObjectId(userId),
                     date: {
-                        $gte: new Date(moment().subtract(2, 'months').startOf('month').utc().toISOString()),
+                        $gte: new Date(moment().subtract(1, 'months').startOf('month').utc().toISOString()),
                         $lt: new Date(moment().endOf('day').utc().toISOString())
                     }
                 }
@@ -102,8 +116,7 @@ const dashboardData = async (req, res) => {
             {
                 $group: {
                     _id: {
-                        year: { $year: "$date" },
-                        month: { $month: "$date" }
+                        source: "$source"
                     },
                     totalIncome: { $sum: "$amount" }
                 }
@@ -111,15 +124,13 @@ const dashboardData = async (req, res) => {
             {
                 $project: {
                     _id: 0,
-                    year: "$_id.year",
-                    month: "$_id.month",
+                    source: "$_id.source",
                     totalIncome: 1
                 }
             },
             {
-                $sort: {
-                    year: -1,
-                    month: -1
+                $sort: {                    
+                    source:1
                 }
             }
 
@@ -253,7 +264,7 @@ const dashboardData = async (req, res) => {
             }
         ])
 
-
+        
         res.status(200).json({
             "status": true, data: {
                 currentmonthdata: {
@@ -266,7 +277,8 @@ const dashboardData = async (req, res) => {
                     income: threeMonthincomeTotal
                 },
                 currentmonthexpense: currentmonthexpense,
-                combinedtransaction: bothTransaction
+                combinedtransaction: bothTransaction,
+                currentmonthincome:currentmonthincome
             }
         });
 

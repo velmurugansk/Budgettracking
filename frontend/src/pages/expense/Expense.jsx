@@ -134,7 +134,7 @@ const Expense = () => {
           open={open}
           aria-labelledby="child-modal-title"
           aria-describedby="child-modal-description"
-          onBackdropClick={null} // Disables close on backdrop click
+          onClose={null} // Disables close on backdrop click
           disableEscapeKeyDown={true} // Disables close on Escape key press          
         >
           <Box sx={{ ...style }}>

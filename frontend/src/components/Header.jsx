@@ -17,7 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import Themebutton from './Themebutton';
 
 const pages = [{ key: 'Dashboard', path: "/" }, { key: 'Income', path: "/income" }, { key: 'Expense', path: "/expense" }];
-const settings = ['Profile', 'Logout'];
+const settings = ['Logout'];
 
 const Header = () => {
   const drawerWidth = 240;
