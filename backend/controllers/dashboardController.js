@@ -15,7 +15,29 @@ const dashboardData = async (req, res) => {
                         $lt: new Date(moment().endOf('day').utc().toISOString())
                     }
                 }
-            }
+            },
+            {
+                $sort: {
+                    date: -1 
+                }
+            }            
+        ])
+
+        const currentmonthincome = await Income.aggregate([
+            {
+                $match: {
+                    userId: new ObjectId(userId),
+                    date: {
+                        $gte: new Date(moment().startOf('month').utc().toISOString()),
+                        $lt: new Date(moment().endOf('day').utc().toISOString())
+                    }
+                }
+            },
+            {
+                $sort: {
+                    date: -1 
+                }
+            }            
         ])
 
         const currentMonthincomes = await Income.aggregate([
@@ -53,7 +75,7 @@ const dashboardData = async (req, res) => {
                 $match: {
                     userId: new ObjectId(userId),
                     date: {
-                        $gte: new Date(moment().subtract(2, 'months').startOf('month').utc().toISOString()),
+                        $gte: new Date(moment().subtract(1, 'months').startOf('month').utc().toISOString()),
                         $lt: new Date(moment().endOf('day').utc().toISOString())
                     }
                 }
@@ -61,24 +83,21 @@ const dashboardData = async (req, res) => {
             {
                 $group: {
                     _id: {
-                        year: { $year: "$date" },
-                        month: { $month: "$date" }
+                        category: "$category"
                     },
-                    totalIncome: { $sum: "$amount" }
+                    totalExpense: { $sum: "$amount" }
                 }
             },
             {
                 $project: {
                     _id: 0,
-                    year: "$_id.year",
-                    month: "$_id.month",
-                    totalIncome: 1
+                    category: "$_id.category",
+                    totalExpense: 1
                 }
             },
             {
-                $sort: {
-                    year: -1,
-                    month: -1
+                $sort: {                    
+                    category:1 
                 }
             }
 
@@ -89,7 +108,7 @@ const dashboardData = async (req, res) => {
                 $match: {
                     userId: new ObjectId(userId),
                     date: {
-                        $gte: new Date(moment().subtract(2, 'months').startOf('month').utc().toISOString()),
+                        $gte: new Date(moment().subtract(1, 'months').startOf('month').utc().toISOString()),
                         $lt: new Date(moment().endOf('day').utc().toISOString())
                     }
                 }
@@ -97,8 +116,7 @@ const dashboardData = async (req, res) => {
             {
                 $group: {
                     _id: {
-                        year: { $year: "$date" },
-                        month: { $month: "$date" }
+                        source: "$source"
                     },
                     totalIncome: { $sum: "$amount" }
                 }
@@ -106,15 +124,13 @@ const dashboardData = async (req, res) => {
             {
                 $project: {
                     _id: 0,
-                    year: "$_id.year",
-                    month: "$_id.month",
+                    source: "$_id.source",
                     totalIncome: 1
                 }
             },
             {
-                $sort: {
-                    year: -1,
-                    month: -1
+                $sort: {                    
+                    source:1
                 }
             }
 
@@ -228,9 +244,23 @@ const dashboardData = async (req, res) => {
                 }
             },
             {
-                $sort: {
-                    date: 1 // Sort ascending by date
+                $group: {
+                    _id: "$_id", // Group by the unique _id of each transaction
+                    // Keep the first document for each _id found
+                    doc: { $first: "$$ROOT" }
                 }
+            },
+            // Replace the root document with the grouped document
+            {
+                $replaceRoot: { newRoot: "$doc" }
+            },
+            {
+                $sort: {
+                    date: -1 // Sort ascending by date
+                }
+            },
+            {
+                $limit: 7 // The new stage to limit the results
             }
         ])
 
@@ -247,7 +277,8 @@ const dashboardData = async (req, res) => {
                     income: threeMonthincomeTotal
                 },
                 currentmonthexpense: currentmonthexpense,
-                combinedtransaction: bothTransaction
+                combinedtransaction: bothTransaction,
+                currentmonthincome:currentmonthincome
             }
         });
 

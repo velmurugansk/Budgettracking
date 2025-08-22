@@ -74,6 +74,7 @@ const Income = () => {
       if (responsedata?.data?.status) {
         toast.success(responsedata.data.message);
         handleClose();
+        getIncomeslist();
       } else {
         toast.error(responsedata.data.message);
       }
@@ -97,6 +98,7 @@ const Income = () => {
       resultData && resultData.length > 0 ? setIncomelists(dataWithIds) : '';
       if (resultData && resultData.length > 0) {
         setChartdata([]);
+        dataWithIds.sort((a, b) => new Date(a.date) - new Date(b.date));
         dataWithIds.map(item => {          
           setChartdata(prevData => [...prevData, {
             name : item.source,
@@ -126,7 +128,7 @@ const Income = () => {
           open={open}
           aria-labelledby="child-modal-title"
           aria-describedby="child-modal-description"
-          onBackdropClick={null} // Disables close on backdrop click
+          onClose={null} // Disables close on backdrop click
           disableEscapeKeyDown={true} // Disables close on Escape key press          
         >
           <Box sx={{ ...style }}>
