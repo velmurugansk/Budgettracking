@@ -48,6 +48,13 @@ const dispatch = useDispatch();
     }
   }
 
+  const handleKeypress = (e) => {
+    e.preventDefault();          
+    if (e.keyCode === 13) {
+      handleSubmit(e);
+    }
+  };
+
   return (
     <div className='bg-[#d4d4d4] h-screen flex items-center justify-center'>
       <Container maxWidth="sm" className="border-2 h-100 shadow-[#b3b3b3] border-[#d4d4d4]">
@@ -57,6 +64,7 @@ const dispatch = useDispatch();
           error={!!error} 
           name="email" 
           onChange={handleChanges} 
+          onKeyDown={handleKeypress}
           value={userdata.name} 
           placeholder='Enter email' 
           required 
@@ -69,6 +77,7 @@ const dispatch = useDispatch();
           error={!!pwderr} 
           name="password" 
           onChange={handleChanges} 
+          onKeyDown={handleKeypress}
           value={userdata.password} 
           placeholder='Enter password' 
           required 

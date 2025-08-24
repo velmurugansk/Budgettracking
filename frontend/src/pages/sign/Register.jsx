@@ -61,6 +61,13 @@ const Register = () => {
     }
   }
 
+  const handleKeypress = (e) => {
+    e.preventDefault();          
+    if (e.keyCode === 13) {
+      handleSubmit(e);
+    }
+  };
+
   return (
     <div className='bg-[#d4d4d4] h-screen flex items-center justify-center'>
       <Container maxWidth="sm" className="border-2 h-100 shadow-[#b3b3b3] border-[#d4d4d4]">
@@ -70,6 +77,7 @@ const Register = () => {
             error={!!nameErr}
             name="name"
             onChange={handleChanges}
+            onKeyDown={handleKeypress}
             value={registerdata.name}
             placeholder='Enter name'
             required
@@ -82,6 +90,7 @@ const Register = () => {
             error={!!emailErr}
             name="email"
             onChange={handleChanges}
+            onKeyDown={handleKeypress}
             value={registerdata.email}
             placeholder='Enter email'
             required
@@ -94,6 +103,7 @@ const Register = () => {
             error={!!passwordErr}
             name="password"
             onChange={handleChanges}
+            onKeyDown={handleKeypress}
             value={registerdata.password}
             placeholder='Enter password'
             required

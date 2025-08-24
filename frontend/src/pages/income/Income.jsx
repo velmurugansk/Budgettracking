@@ -115,7 +115,7 @@ const Income = () => {
     getIncomeslist(uid);
   }, [uid])
 
-
+  
   return (
     <Box className='px-4 py-4 rounded-md' sx={{ bgcolor: 'background.paper' }}>
       <div className='flex items-center justify-between'>
@@ -153,7 +153,7 @@ const Income = () => {
               <TextField type='text'
                 error={!!amounterr}
                 name="amount"
-                onChange={({ target }) => handleChange("amount", target.value)}
+                onChange={({ target }) => handleChange("amount", target.value)}                
                 value={incomedata.amount}
                 placeholder='Enter Amount'
                 required
@@ -166,7 +166,7 @@ const Income = () => {
                 error={!!dateerr}
                 name="date"
                 onChange={({ target }) => handleChange("date", target.value)}
-                value={incomedata.date}
+                value={incomedata.date}                
                 placeholder='Select Date'
                 required
                 fullWidth
