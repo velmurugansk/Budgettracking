@@ -61,8 +61,7 @@ const Register = () => {
     }
   }
 
-  const handleKeypress = (e) => {
-    e.preventDefault();          
+  const handleKeypress = (e) => {            
     if (e.keyCode === 13) {
       handleSubmit(e);
     }
@@ -70,7 +69,7 @@ const Register = () => {
 
   return (
     <div className='bg-[#d4d4d4] h-screen flex items-center justify-center'>
-      <Container maxWidth="sm" className="border-2 h-100 shadow-[#b3b3b3] border-[#d4d4d4]">
+      <Container maxWidth="sm" className="border-2 h-auto shadow-[#b3b3b3] border-[#d4d4d4]">
         <Paper elevation={10} sx={{ borderColor: "#d4d4d4" }} className='p-3 px-8'>
           <p className='text-center font-bold text-2xl my-5'>Signup</p>
           <TextField type='text'

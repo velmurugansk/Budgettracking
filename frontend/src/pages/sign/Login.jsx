@@ -19,14 +19,18 @@ const dispatch = useDispatch();
 
   const handleChanges = (e) => {
     e.preventDefault()
-    const { name, value } = e.target;
-    setUserdata({ ...userdata, [name]: value });
+    const { name, value } = e.target;    
+    setUserdata({ ...userdata, 
+      [name]: value });
   }
 
   const handleSubmit = (e) => {
-    e.preventDefault();    
-    const isvalidmail = validateEmail(userdata.email) ? setError('Please enter a valid email address') : setError('');
-    const validpassword = validatePassword(userdata.password) ? setPwderr('Password must be at least 8 characters long.') : setPwderr('');  
+    e.preventDefault();  
+    validateEmail(userdata.email) ? setError('Please enter a valid email address') : setError('');
+    validatePassword(userdata.password) ? userdata.password == "" ? setPwderr('Password is required!.') : setPwderr('Password must be at least 8 characters long.') : setPwderr('');
+    const isvalidmail = validateEmail(userdata.email);
+    const validpassword = validatePassword(userdata.password);  
+    
     if(!isvalidmail && !validpassword) {      
       const data = dispatch(userLogin(userdata));      
       data.then(unwrapResult)
@@ -48,8 +52,7 @@ const dispatch = useDispatch();
     }
   }
 
-  const handleKeypress = (e) => {
-    e.preventDefault();          
+  const handleKeypress = (e) => {       
     if (e.keyCode === 13) {
       handleSubmit(e);
     }
@@ -65,7 +68,7 @@ const dispatch = useDispatch();
           name="email" 
           onChange={handleChanges} 
           onKeyDown={handleKeypress}
-          value={userdata.name} 
+          value={userdata.email} 
           placeholder='Enter email' 
           required 
           fullWidth 
